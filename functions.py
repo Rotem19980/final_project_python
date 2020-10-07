@@ -28,17 +28,20 @@ class Functions(object):
         only if all the data of all employees is supplied.
         new_employees = a string.
         """
-        print("Please add the file path of the employees you wish to add: ")
-        new_employees_file_path = input()
-        # how to refer the input in the open command?
-        f = open('new_employees.csv', "r")
-        data = f.read()
-        f.close()
-        f = open("employees.csv", "a")
-        f.write(data)
-        f.close()
+        new_employees_file_path = ""  # initializing string variable for raw data input
+        new_employees_file_path = raw_input("Please add the file path of the employees you wish to add: ")
+        try:
+            with open(new_employees_file_path) as infile:
+                f = open(new_employees_file_path, 'r+')
+                data = f.read()
+                f.close()
+                f = open("employees.csv", "a")
+                f.write(data)
+                f.close()
+        except FileNotFoundError:
+            print("File does not exist.")
 
-    # need to change to user input and add tests.
+    #how to check if all data is supplied in the file
 
     def delete_employee(self):
         """
@@ -59,7 +62,7 @@ class Functions(object):
         os.remove('employees.csv')
         os.rename('employees_edit.csv', 'employees.csv')
 
-    # Throws back - IndexError: list index out of range, handle exceptions
+    # handle exception if employee does not exist
 
     def delete_employees_from_file(self):
         """
@@ -79,7 +82,7 @@ class Functions(object):
         f.write(data)
         f.close()
 
-    # Same error from above, I also want to delete it and use a one function for both deleting requests
+    # Gives an error
 
     def mark_attendance(self):
         """
