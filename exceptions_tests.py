@@ -1,20 +1,39 @@
+def employee_id_test():
+    while True:
+        try:
+            employee_id = int(input("Please add the employee's id: "))
+            if len(str(employee_id)) == 9:
+                if int(employee_id) < 100000000:
+                    employee_id = str(employee_id.zfill(9))
+                print(employee_id)
+                break
+            else:
+                print('Error! Please insert a 9 numbers employee id.')
+        except ValueError:
+            print('Error! Please insert a valid employee id.')
+employee_id_test()
 
-print("Please add the employee's id: ")
-employee_id = int(input())
-count = 0
-while employee_id > 0:
-    count = count+1
-    employee_id = employee_id/10
-if count != 9:
-    raise ValueError
-    print('Error! Please insert a valid employee id.')
-print("Please add the employee's name: ")
-name = str(input())
-if name is not str:
-    raise ValueError
-    print('Error! Please insert a valid name.')
-print("Please add the employee's phone number: ")
-phone = int(input())
-print("Please add the employee's age: ")
-age = int(input())
+def age_test():
+    while True:
+        try:
+            age = int(input("Please add the employee's age: "))
+            if 18 < age < 100:
+                print(age)
+                break
+            else:
+                print("Sorry, please insert a valid age.")
+        except ValueError:
+            print('Error! Please insert a valid employee age.')
+
+def name():
+    while True:
+        try:
+            name = str(input("Please add the employee's name: "))
+            if any(char.isdigit() for char in name) == False:
+                print(name)
+                break
+            else:
+                print('Error! Please insert a valid employee name.')
+        except ValueError:
+            print('Error! Please insert a valid employee name.')
 
