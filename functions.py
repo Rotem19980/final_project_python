@@ -5,7 +5,6 @@ class Functions(object):
     def add_employee(self):
         """
         This function gets the credentials of a new employee from user and adds it to the employees file.
-        new_employee = a string.
         """
         print("Please add credentials of a new employee (employee_id, name, phone, age): ")
         new_employee = input()
@@ -18,7 +17,7 @@ class Functions(object):
             print('Error! Please insert a valid name.')
 
         with open('employees.csv', 'a', newline='') as file:
-        file.write(new_employee)
+            file.write(new_employee)
 
     # need to save the input as a list and then handle exceptions.
 
@@ -28,7 +27,6 @@ class Functions(object):
         only if all the data of all employees is supplied.
         new_employees = a string.
         """
-        new_employees_file_path = ""  # initializing string variable for raw data input
         new_employees_file_path = raw_input("Please add the file path of the employees you wish to add: ")
         try:
             with open(new_employees_file_path) as infile:
@@ -70,19 +68,23 @@ class Functions(object):
         only if all the data of all employees is supplied.
         employees_to_delete = a string.
          """
-        f = open('employees_to_delete.csv', "r")
-        data = f.read()
-        f.close()
-        with open('employees.csv', 'r') as inp, open('employees_edit.csv', 'w') as out:
-            writer = csv.writer(out)
-            for row in csv.reader(inp):
-                if row[1] != 'employees_to_delete.csv':
-                    writer.writerow(row)
-        f = open("employees.csv", "a")
-        f.write(data)
-        f.close()
+        employees_to_delete_file_path = raw_input("Please add the file path of the employees you wish to add: ")
+        try:
+            with open(employees_to_delete_file_path, "r") as f:
+                data_to_erase = f.readlines()  # read data line by line
+            with open("employees.csv", "r") as f:
+                data_to_keep = f.readlines()  # read data line by line
 
-    # Gives an error
+                # open file in write mode
+            with open("employees.csv", "w") as f:
+                for line in data_to_keep:
+                    if line in data_to_erase:
+                        pass
+                    else:
+                        f.write(line)
+        except FileNotFoundError:
+            print("File does not exist.")
+    # check if all data is supplied
 
     def mark_attendance(self):
         """
@@ -112,11 +114,11 @@ class Functions(object):
             Fileout.writerow(csvdata)
 
     # how to handle exceptions and writing every entry in a new row
-
+    # To handle exceptions in input of id
     def attendance_report_of_employee(self):
         """
         The function gets an employee's id as the input and prints all the entries of his attendance.
-        employee_id = a 9 numbers integer.
+        id_input = a 9 numbers integer.
         """
         print("Please enter an employee's id: ")
         id_input = input()
@@ -127,7 +129,7 @@ class Functions(object):
                 if employee_id == id_input:
                     print(row)
 
-    # To handle exceptions in input
+    # To handle exceptions in input of id
 
     def monthly_attendance_report(self):
         """
