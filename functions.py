@@ -1,6 +1,10 @@
-class Functions(object):
+class Functions:
 
-    def __init__(self, ):
+    def __init__(self, employee_id, name, phone, age):
+        self.employee_id = employee_id
+        self.name = name
+        self.phone = phone
+        self.age = age
 
     def add_employee(self):
         """
@@ -9,12 +13,6 @@ class Functions(object):
         print("Please add credentials of a new employee (employee_id, name, phone, age): ")
         new_employee = input()
 
-        if int(employee_id.len()) != 9:
-            raise ValueError
-            print('Error! Please insert a valid employee id.')
-        elif name is not str:
-            raise ValueError
-            print('Error! Please insert a valid name.')
 
         with open('employees.csv', 'a', newline='') as file:
             file.write(new_employee)
@@ -121,12 +119,11 @@ class Functions(object):
         id_input = a 9 numbers integer.
         """
         print("Please enter an employee's id: ")
-        id_input = input()
+        employee_id = input()
         with open('attendance_log.csv', 'r') as csvfile:
             content = csv.reader(csvfile, delimiter=',')
             for row in content:
-                employee_id = row[0]
-                if employee_id == id_input:
+                if row[0] == employee_id:
                     print(row)
 
     # To handle exceptions in input of id
