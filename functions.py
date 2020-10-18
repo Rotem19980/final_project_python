@@ -5,7 +5,7 @@ import os #this is needed for using directory paths and manipulating them
 import sys
 from pip._vendor.distlib.compat import raw_input
 
-class Functions:
+class Employees_attendance:
 
     def __init__(self, employee_id, name, phone, age):
         self.employee_id = employee_id
@@ -13,7 +13,7 @@ class Functions:
         self.phone = phone
         self.age = age
 
-    def add_employee():
+    def add_employee(self):
         """
         This function gets the credentials of a new employee from user and adds it to the employees file.
         """
@@ -48,11 +48,11 @@ class Functions:
                 f.write(data)
                 f.close()
         except FileNotFoundError:
-            print("File does not exist.")
+            return "File does not exist."
 
     #how to check if all data is supplied in the file
 
-    def delete_employee():
+    def delete_employee(self):
         """
         This function gets from the user a name of an employee he wishes to remove, writes all the rest of the employees to a temporary
         file and then deletes the old employees file. Afterwards, it saves it as the main employees file (employees).
@@ -67,7 +67,7 @@ class Functions:
                 if row[1] != employee_name:
                     writer.writerow(row)
                 else:
-                    print("Sorry, that employee does not exist in this file.")
+                    return "Sorry, that employee does not exist in this file."
 
         os.remove('employees.csv')
         os.rename('employees_edit.csv', 'employees.csv')
@@ -95,10 +95,10 @@ class Functions:
                     else:
                         f.write(line)
         except FileNotFoundError:
-            print("File does not exist.")
+            return "File does not exist."
     # check if all data is supplied
 
-    def mark_attendance():
+    def mark_attendance(self):
         """
         The function gets an employee's id as the input and saves the date and time of him in the attendance log file.
         employee_id = a 9 numbers integer.
@@ -130,7 +130,7 @@ class Functions:
             content = csv.reader(csvfile, delimiter=',')
             for row in content:
                 if row[0] == employee_id:
-                    print(row)
+                    return row
 
     # to do
 
@@ -144,7 +144,7 @@ class Functions:
             for row in content:
                 month = int(row[1].split('-')[1])
                 if month == this_month:
-                    print(row)
+                    return row
     # Done
 
     def late_employees_report(self):
@@ -156,5 +156,5 @@ class Functions:
             for row in content:
                 hour = str(row[1].split(' ')[1])
                 if hour > "09:30:00":
-                    print(row)
+                    return row
     #Done

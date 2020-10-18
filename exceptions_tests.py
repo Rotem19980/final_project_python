@@ -12,11 +12,11 @@ def employee_id_test():
                         employee_id = str(employee_id.zfill(9))
                     return str(employee_id)
                 else:
-                    print('Error! Please insert a 9 numbers employee id.')
+                    return 'Error! Please insert a 9 numbers employee id.'
             else:
-                print('Error! Please insert a 9 numbers employee id.')
+                return 'Error! Please insert a 9 numbers employee id.'
         except ValueError:
-            print('Error! Please insert a valid employee id.')
+            return 'Error! Please insert a valid employee id.'
 
 def name():
     """
@@ -29,9 +29,9 @@ def name():
             if any(char.isdigit() for char in name) == False:
                 return str(name)
             else:
-                print('Error! Please insert a valid employee name.')
+                return 'Error! Please insert a valid employee name.'
         except ValueError:
-            print('Error! Please insert a valid employee name.')
+            return 'Error! Please insert a valid employee name.'
 
 def phone_test():
     """
@@ -47,11 +47,11 @@ def phone_test():
                         phone = str(phone.zfill(9))
                     return str(phone)
                 else:
-                    print('Error! Please insert a 10 digits phone number.')
+                    return 'Error! Please insert a 10 digits phone number.'
             else:
-                print('Error! Please insert a 10 digits phone number.')
+                return 'Error! Please insert a 10 digits phone number.'
         except ValueError:
-            print('Error! Please insert a valid phone number.')
+            return 'Error! Please insert a valid phone number.'
 
 def age_test():
     """
@@ -64,9 +64,9 @@ def age_test():
             if 18 < age < 100:
                 return str(age)
             else:
-                print("Sorry, please insert a valid age.")
+                return "Sorry, please insert a valid age."
         except ValueError:
-            print('Error! Please insert a valid employee age.')
+            return 'Error! Please insert a valid employee age.'
 
 
 
