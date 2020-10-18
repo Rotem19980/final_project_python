@@ -10,8 +10,7 @@ def employee_id_test():
                 if len(str(employee_id)) == 9:
                     if int(employee_id) < 100000000:
                         employee_id = str(employee_id.zfill(9))
-                    print(str(employee_id))
-                    break
+                    return str(employee_id)
                 else:
                     print('Error! Please insert a 9 numbers employee id.')
             else:
@@ -28,8 +27,7 @@ def name():
         try:
             name = str(input("Please add the employee's name: "))
             if any(char.isdigit() for char in name) == False:
-                print(name)
-                break
+                return str(name)
             else:
                 print('Error! Please insert a valid employee name.')
         except ValueError:
@@ -47,8 +45,7 @@ def phone_test():
                 if len(str(phone)) == 10:
                     if int(phone) < 100000000:
                         phone = str(phone.zfill(9))
-                    print(str(phone))
-                    break
+                    return str(phone)
                 else:
                     print('Error! Please insert a 10 digits phone number.')
             else:
@@ -58,15 +55,14 @@ def phone_test():
 
 def age_test():
     """
-    This function gets from the user aa age of an employee as a integer and checks if it's valid.
+    This function gets from the user an age of an employee as a integer and checks if it's valid.
     age = an integer.
     """
     while True:
         try:
             age = int(input("Please add the employee's age: "))
             if 18 < age < 100:
-                print(str(age))
-                break
+                return str(age)
             else:
                 print("Sorry, please insert a valid age.")
         except ValueError:

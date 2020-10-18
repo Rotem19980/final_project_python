@@ -1,3 +1,10 @@
+import csv
+import datetime
+import exceptions_tests
+import os #this is needed for using directory paths and manipulating them
+import sys
+from pip._vendor.distlib.compat import raw_input
+
 class Functions:
 
     def __init__(self, employee_id, name, phone, age):
@@ -6,18 +13,24 @@ class Functions:
         self.phone = phone
         self.age = age
 
-    def add_employee(self):
+    def add_employee():
         """
         This function gets the credentials of a new employee from user and adds it to the employees file.
         """
         print("Please add credentials of a new employee (employee_id, name, phone, age): ")
-        new_employee = input()
-
-
-        with open('employees.csv', 'a', newline='') as file:
-            file.write(new_employee)
-
-    # need to save the input as a list and then handle exceptions.
+        employee_id = exceptions_tests.employee_id_test()
+        name = exceptions_tests.name()
+        phone = exceptions_tests.phone_test()
+        age = exceptions_tests.age_test()
+        new_employee = list()
+        new_employee.append(employee_id)
+        new_employee.append(name)
+        new_employee.append(phone)
+        new_employee.append(age)
+        with open("employees.csv", "a", newline="") as csvFile:
+            fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
+            fileout.writerow(new_employee)
+# Done
 
     def add_employees_from_file(self):
         """
@@ -39,25 +52,26 @@ class Functions:
 
     #how to check if all data is supplied in the file
 
-    def delete_employee(self):
+    def delete_employee():
         """
         This function gets from the user a name of an employee he wishes to remove, writes all the rest of the employees to a temporary
         file and then deletes the old employees file. Afterwards, it saves it as the main employees file (employees).
         employees_name = a string.
         """
+        employee_name = exceptions_tests.name()
         with open("employees_edit.csv", "w") as my_empty_csv:
             pass
-        print("Please add the name of the employee you wish to remove: ")
-        employee_name = input()
         with open('employees.csv', 'r') as inp, open('employees_edit.csv', 'w') as out:
             writer = csv.writer(out)
             for row in csv.reader(inp):
                 if row[1] != employee_name:
                     writer.writerow(row)
+                else:
+                    print("Sorry, that employee does not exist in this file.")
 
         os.remove('employees.csv')
         os.rename('employees_edit.csv', 'employees.csv')
-
+    # IndexError: list index out of range
     # handle exception if employee does not exist
 
     def delete_employees_from_file(self):
@@ -84,49 +98,41 @@ class Functions:
             print("File does not exist.")
     # check if all data is supplied
 
-    def mark_attendance(self):
+    def mark_attendance():
         """
         The function gets an employee's id as the input and saves the date and time of him in the attendance log file.
         employee_id = a 9 numbers integer.
         """
-        print("Please enter your id: ")
-        employee_id = input()
-        csvdata = [employee_id, datetime.datetime.now()]
-        with open("attendance_log.csv", "a") as csvFile:
-            Fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
-            Fileout.writerow(csvdata)
-
-
-        print("Please enter your id: ")
-        employee_id = input()
-        csvdata = [employee_id, datetime.datetime.now(), employee_name]
+        employee_id = exceptions_tests.employee_id_test()
+        csv_data = list()
+        csv_data.append(employee_id)
+        csv_data.append(datetime.datetime.now())
         with open('employees.csv') as File:
             reader = csv.reader(File, delimiter=',', quotechar=',',
                                 quoting=csv.QUOTE_MINIMAL)
             for row in reader:
                 name = row[1]
                 if employee_id == row[0]:
-                    employee_name == name
+                    csv_data.append(name)
         with open("attendance_log.csv", "a") as csvFile:
-            Fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
-            Fileout.writerow(csvdata)
+            fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
+            fileout.writerow(csv_data)
 
-    # how to handle exceptions and writing every entry in a new row
-    # To handle exceptions in input of id
+    # Done
+
     def attendance_report_of_employee(self):
         """
         The function gets an employee's id as the input and prints all the entries of his attendance.
         id_input = a 9 numbers integer.
         """
-        print("Please enter an employee's id: ")
-        employee_id = input()
+        employee_id = exceptions_tests.employee_id_test()
         with open('attendance_log.csv', 'r') as csvfile:
             content = csv.reader(csvfile, delimiter=',')
             for row in content:
                 if row[0] == employee_id:
                     print(row)
 
-    # To handle exceptions in input of id
+    # to do
 
     def monthly_attendance_report(self):
         """
@@ -151,4 +157,4 @@ class Functions:
                 hour = str(row[1].split(' ')[1])
                 if hour > "09:30:00":
                     print(row)
-    # Done
+    #Done
