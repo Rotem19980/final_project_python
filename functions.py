@@ -18,15 +18,15 @@ class Employees_attendance:
         This function gets the credentials of a new employee from user and adds it to the employees file.
         """
         print("Please add credentials of a new employee (employee_id, name, phone, age): ")
-        employee_id = exceptions_tests.employee_id_test()
-        name = exceptions_tests.name()
-        phone = exceptions_tests.phone_test()
-        age = exceptions_tests.age_test()
+        self.employee_id = exceptions_tests.employee_id_test()
+        self.name = exceptions_tests.name()
+        self.phone = exceptions_tests.phone_test()
+        self.age = exceptions_tests.age_test()
         new_employee = list()
-        new_employee.append(employee_id)
-        new_employee.append(name)
-        new_employee.append(phone)
-        new_employee.append(age)
+        new_employee.append(self.employee_id)
+        new_employee.append(self.name)
+        new_employee.append(self.phone)
+        new_employee.append(self.age)
         with open("employees.csv", "a", newline="") as csvFile:
             fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
             fileout.writerow(new_employee)
@@ -58,13 +58,13 @@ class Employees_attendance:
         file and then deletes the old employees file. Afterwards, it saves it as the main employees file (employees).
         employees_name = a string.
         """
-        employee_name = exceptions_tests.name()
+        self.name = exceptions_tests.name()
         with open("employees_edit.csv", "w") as my_empty_csv:
             pass
         with open('employees.csv', 'r') as inp, open('employees_edit.csv', 'w') as out:
             writer = csv.writer(out)
             for row in csv.reader(inp):
-                if row[1] != employee_name:
+                if row[1] != self.name:
                     writer.writerow(row)
                 else:
                     return "Sorry, that employee does not exist in this file."
@@ -103,7 +103,7 @@ class Employees_attendance:
         The function gets an employee's id as the input and saves the date and time of him in the attendance log file.
         employee_id = a 9 numbers integer.
         """
-        employee_id = exceptions_tests.employee_id_test()
+        self.employee_id = exceptions_tests.employee_id_test()
         csv_data = list()
         csv_data.append(employee_id)
         csv_data.append(datetime.datetime.now())
@@ -112,7 +112,7 @@ class Employees_attendance:
                                 quoting=csv.QUOTE_MINIMAL)
             for row in reader:
                 name = row[1]
-                if employee_id == row[0]:
+                if self.employee_id == row[0]:
                     csv_data.append(name)
         with open("attendance_log.csv", "a") as csvFile:
             fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
@@ -125,11 +125,11 @@ class Employees_attendance:
         The function gets an employee's id as the input and prints all the entries of his attendance.
         id_input = a 9 numbers integer.
         """
-        employee_id = exceptions_tests.employee_id_test()
+        self.employee_id = exceptions_tests.employee_id_test()
         with open('attendance_log.csv', 'r') as csvfile:
             content = csv.reader(csvfile, delimiter=',')
             for row in content:
-                if row[0] == employee_id:
+                if row[0] == self.employee_id:
                     return row
 
     # to do
