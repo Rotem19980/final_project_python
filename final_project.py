@@ -1,9 +1,3 @@
-from functions import Employees_attendance
-import csv
-import datetime
-import exceptions_tests
-import os #this is needed for using directory paths and manipulating them
-import sys
-from pip._vendor.distlib.compat import raw_input
+from functions import Employees_list
 
-Employees_attendance.late_employees_report(self=None)
+Employees_list.add_employee()

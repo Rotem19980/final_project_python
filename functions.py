@@ -5,7 +5,7 @@ import os #this is needed for using directory paths and manipulating them
 import sys
 from pip._vendor.distlib.compat import raw_input
 
-class Employees_attendance:
+class Employees_list:
 
     def __init__(self, employee_id, name, phone, age):
         self.employee_id = employee_id
@@ -79,7 +79,7 @@ class Employees_attendance:
         This function gets from the user a file path that contains the data of the employees and removes the employees from the employees file
         only if all the data of all employees is supplied.
         employees_to_delete = a string.
-         """
+        """
         employees_to_delete_file_path = raw_input("Please add the file path of the employees you wish to add: ")
         try:
             with open(employees_to_delete_file_path, "r") as f:
@@ -105,7 +105,7 @@ class Employees_attendance:
         """
         self.employee_id = exceptions_tests.employee_id_test()
         csv_data = list()
-        csv_data.append(employee_id)
+        csv_data.append(self.employee_id)
         csv_data.append(datetime.datetime.now())
         with open('employees.csv') as File:
             reader = csv.reader(File, delimiter=',', quotechar=',',
