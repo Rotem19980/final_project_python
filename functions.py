@@ -1,35 +1,50 @@
 import csv
 import datetime
 import exceptions_tests
-import os #this is needed for using directory paths and manipulating them
-import sys
+import os
 from pip._vendor.distlib.compat import raw_input
+
 
 class Employee(object):
 
     def __init__(self, employee_id, name, phone, age):
+        """
+        This function gets the employee's id, name, phone and age from user.
+        employee_id = a string.
+        name = a string.
+        phone = a string.
+        age = a string.
+        """
         self.employee_id = employee_id
         self.name = name
         self.phone = phone
         self.age = age
 
-class Employees_list(object):
+
+class EmployeesList(object):
+
     def __init__(self, list_of_employees):
+        """
+        This function gets employees file's path from user.
+        list_of_employees = a string.
+        """
         self.list_of_employees = list_of_employees
 
     def add_employee(self, new_employee):
-        """
-        This function gets the credentials of a new employee from user and adds it to the employees file.
-        """
-        with open(self.list_of_employees, mode='a') as csvFile:
-            fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
-            fileout.writerow([new_employee.employee_id, new_employee.name, new_employee.phone, new_employee.age])
+        new_employee_data = [new_employee.employee_id, new_employee.name, new_employee.phone, new_employee.age]
+        with open(self.list_of_employees, 'r+') as file1:
+            existing_lines = csv.reader(file1)
+            for row in existing_lines:
+                if new_employee_data in row:
+                    print("Sorry, the employee is already exist.")
+                    return
+            file1.write(str(new_employee_data) + '\n')
 
     def add_employees_from_file(self):
         """
         This function gets from the user a file path that contains the data of the employees and adds it to the employees file
         only if all the data of all employees is supplied.
-        new_employees = a string.
+        new_employees_file_path = a string.
         """
         new_employees_file_path = raw_input("Please add the full file path of the employees you wish to add: ")
         try:
@@ -97,19 +112,21 @@ class Employees_list(object):
         """
         The function gets an employee's id as the input and saves the date and time of him in the attendance log file.
         employee_id = a 9 numbers integer.
+        monthly_report_url = a string.
         """
+        monthly_report_url = input("Please enter monthly attendance url: ")
         self.employee_id = exceptions_tests.employee_id_test()
         csv_data = list()
         csv_data.append(self.employee_id)
         csv_data.append(datetime.datetime.now())
-        with open('employees.csv') as File:
+        with open(self.list_of_employees) as File:
             reader = csv.reader(File, delimiter=',', quotechar=',',
                                 quoting=csv.QUOTE_MINIMAL)
             for row in reader:
                 name = row[1]
                 if self.employee_id == row[0]:
                     csv_data.append(name)
-        with open("attendance_log.csv", "a") as csvFile:
+        with open(monthly_report_url, "a") as csvFile:
             fileout = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
             fileout.writerow(csv_data)
 
@@ -119,9 +136,11 @@ class Employees_list(object):
         """
         The function gets an employee's id as the input and prints all the entries of his attendance.
         id_input = a 9 numbers integer.
+        monthly_report_url = a string.
         """
+        monthly_report_url = input("Please enter monthly attendance url: ")
         self.employee_id = exceptions_tests.employee_id_test()
-        with open('attendance_log.csv', 'r') as csvfile:
+        with open(monthly_report_url, 'r') as csvfile:
             content = csv.reader(csvfile, delimiter=',')
             for row in content:
                 if row[0] == self.employee_id:
@@ -132,15 +151,17 @@ class Employees_list(object):
 def monthly_attendance_report():
     """
     The function prints the attendance data of all employees from the last month.
+    monthly_report_url = a string.
     """
+    monthly_report_url = input("Please enter monthly attendance url: ")
     this_month = datetime.datetime.now().month
-    with open('attendance_log.csv', 'r') as csvfile:
+    with open(monthly_report_url, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
-            month = int(row[1].split('-')[1])
-            if month == this_month:
-                return row
-    Done
+            if row and '-' in row[1]:
+                month = int(row[1].split('-')[1])
+                if month == this_month:
+                    return row
 
 def late_employees_report():
     """
