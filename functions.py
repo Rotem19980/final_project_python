@@ -9,6 +9,7 @@ EMPLOYEE_ALREADY_EXISTS_MSG = "Sorry, the employee is already exist."
 LATE_HOUR = "09:30:00"
 ADD_EMPLOYEES_FROM_FILE_MSG = "Please add the full file path of the employees you wish to add: "
 EMPLOYEE_ATTENDANCE_DOESNT_EXIST_MSG = "Sorry, the employee has no data in the attendance report."
+EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG = "Sorry, that employee does not exist in this file."
 
 class Employee(object):
 
@@ -46,8 +47,8 @@ class EmployeesList(object):
                 if new_employee.employee_id in row:
                     print(EMPLOYEE_ALREADY_EXISTS_MSG)
                     return
-            list_of_employees_file.write(str(new_employee.employee_id) + ', ' + new_employee.name +
-                                         ', ' + str(new_employee.phone) + ', ' + str(new_employee.age) + '\r\n')
+            list_of_employees_file.write("{}, {}, {}, {}\r\n").format(str(new_employee.employee_id), new_employee.name,
+                                                                      str(new_employee.phone), str(new_employee.age))
 
     def add_employees_from_file(self):
         """
@@ -86,7 +87,7 @@ class EmployeesList(object):
                 if row[1] != self.name:
                     writer.writerow(row)
                 else:
-                    return "Sorry, that employee does not exist in this file."
+                    return EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG
 
         os.remove('employees.csv')
         os.rename('employees_edit.csv', 'employees.csv')
