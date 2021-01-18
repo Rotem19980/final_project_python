@@ -1,11 +1,16 @@
 import csv
 import datetime
+
+import pandas
+
 import exceptions_tests
 import os
+import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
 EMPLOYEE_DOESNT_EXIST_MSG = "Sorry, the employee doesn't exist."
 EMPLOYEE_ALREADY_EXISTS_MSG = "Sorry, the employee is already exist."
+FILE_DOES_NOT_EXIST_MSG = "File does not exist."
 LATE_HOUR = "09:30:00"
 ADD_EMPLOYEES_FROM_FILE_MSG = "Please add the full file path of the employees you wish to add: "
 EMPLOYEE_ATTENDANCE_DOESNT_EXIST_MSG = "Sorry, the employee has no data in the attendance report."
@@ -36,19 +41,34 @@ class EmployeesList(object):
         """
         self.list_of_employees = list_of_employees
 
+    def open_and_read_file(self, list_of_employees):
+        """
+        This function gets employees file's path from user and returns its content.
+        list_of_employees = a string.
+        """
+        employees_csv_data = pd.read_csv(list_of_employees)
+        return employees_csv_data
+
+    def open_and_write_employee_file(self, new_employee):
+        """
+        This function appends the new employee's data to the main employees file.
+        new_employee = a string.
+        """
+        with open(self.list_of_employees, 'a', newline='') as csv_file:
+            csv_file.write("\n{},{},{},{}".format(str(new_employee.employee_id), new_employee.full_name,
+                                                  str(new_employee.phone), str(new_employee.age)))
+
     def add_employee(self, new_employee):
         """
         This function gets the credentials of a new employee and employees file path from from user and adds it to the file.
         new_employee = new employee's credentials.
         """
-        with open(self.list_of_employees, 'r+') as list_of_employees_file:
-            list_of_employees_data = csv.reader(list_of_employees_file)
-            for row in list_of_employees_data:
-                if new_employee.employee_id in row:
-                    print(EMPLOYEE_ALREADY_EXISTS_MSG)
-                    return
-            list_of_employees_file.write("{}, {}, {}, {}\r\n").format(str(new_employee.employee_id), new_employee.name,
-                                                                      str(new_employee.phone), str(new_employee.age))
+        employees_csv_data = self.open_and_read_file()
+        for row in employees_csv_data.values:
+            if new_employee.employee_id == str(row[0]):
+                print(EMPLOYEE_ALREADY_EXISTS_MSG)
+                return
+        self.open_and_write_employee_file(new_employee)
 
     def add_employees_from_file(self):
         """
@@ -56,21 +76,14 @@ class EmployeesList(object):
         only if all the data of all employees is supplied.
         new_employees_file_path = a string.
         """
-        new_employees_file_path = raw_input(ADD_EMPLOYEES_FROM_FILE_MSG)
         try:
-            with open(new_employees_file_path) as infile:
-                f = open(new_employees_file_path, 'r+')
-                data = f.read()
-                f.close()
-                f = open("employees.csv", "a")
-                f.write(data)
-                f.close()
+            new_employees_file_path = raw_input(ADD_EMPLOYEES_FROM_FILE_MSG)
+            new_employees_file_data = self.open_and_read_file(new_employees_file_path)
+            employees_csv_data = self.open_and_read_file(self.list_of_employees)
+            updated_csv = pandas.concat([employees_csv_data, new_employees_file_data]).drop_duplicates().reset_index(drop=True)
+            updated_csv.to_csv(self.list_of_employees, index=False)
         except FileNotFoundError:
-            return "File does not exist."
-
-
-
-    #how to check if all data is supplied in the file
+            print(FILE_DOES_NOT_EXIST_MSG)
 
     def delete_employee(self):
         """
@@ -102,6 +115,7 @@ class EmployeesList(object):
         """
         employees_to_delete_file_path = raw_input("Please add the file path of the employees you wish to add: ")
         try:
+            data_to_erase = open_and_read_file(employees_to_delete_file_path)
             with open(employees_to_delete_file_path, "r") as f:
                 data_to_erase = f.readlines()  # read data line by line
             with open("employees.csv", "r") as f:
