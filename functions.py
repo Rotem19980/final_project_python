@@ -1,10 +1,8 @@
 import csv
 import datetime
-
-import pandas
-
 import exceptions_tests
 import os
+import pandas
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
@@ -15,6 +13,9 @@ LATE_HOUR = "09:30:00"
 ADD_EMPLOYEES_FROM_FILE_MSG = "Please add the full file path of the employees you wish to add: "
 EMPLOYEE_ATTENDANCE_DOESNT_EXIST_MSG = "Sorry, the employee has no data in the attendance report."
 EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG = "Sorry, that employee does not exist in this file."
+EMPLOYEES_EDIT_FILE = r'C:\Users\rotem\PycharmProjects\final_project_python\employees_edit.csv'
+REMOVE_EMPLOYEES_FROM_FILE_MSG = "Please add the file path of the employees you wish to remove: "
+ATTENDANCE_LOG_FILE_PATH = r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv'
 
 class Employee(object):
 
@@ -60,8 +61,8 @@ class EmployeesList(object):
 
     def add_employee(self, new_employee):
         """
-        This function gets the credentials of a new employee and employees file path from from user and adds it to the file.
-        new_employee = new employee's credentials.
+        This function gets the credentials of a new employee and employees file path from from user and adds it to
+        the file. new_employee = new employee's credentials.
         """
         employees_csv_data = self.open_and_read_file()
         for row in employees_csv_data.values:
@@ -72,9 +73,8 @@ class EmployeesList(object):
 
     def add_employees_from_file(self):
         """
-        This function gets from the user a file path that contains the data of the employees and adds it to the employees file
-        only if all the data of all employees is supplied.
-        new_employees_file_path = a string.
+        This function gets from the user a file path that contains the data of the employees and adds it to the
+        employees file only if all the data of all employees is supplied. new_employees_file_path = a string.
         """
         try:
             new_employees_file_path = raw_input(ADD_EMPLOYEES_FROM_FILE_MSG)
@@ -85,50 +85,45 @@ class EmployeesList(object):
         except FileNotFoundError:
             print(FILE_DOES_NOT_EXIST_MSG)
 
-    def delete_employee(self):
+    def delete_employee(self, new_employee):
         """
-        This function gets from the user a name of an employee he wishes to remove, writes all the rest of the employees to a temporary
-        file and then deletes the old employees file. Afterwards, it saves it as the main employees file (employees).
-        employees_name = a string.
+        This function gets from the user a name of an employee he wishes to remove, writes all the rest of the
+        employees to a temporary file and then deletes the old employees file. Afterwards, it saves it as the main
+        employees file (employees). employees_name = a string.
         """
-        self.full_name = exceptions_tests.full_name_test()
-        with open("employees_edit.csv", "w") as my_empty_csv:
-            pass
-        with open('employees.csv', 'r') as inp, open('employees_edit.csv', 'w') as out:
-            writer = csv.writer(out)
-            for row in csv.reader(inp):
-                if row[1] != self.name:
-                    writer.writerow(row)
-                else:
-                    return EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG
-
-        os.remove('employees.csv')
-        os.rename('employees_edit.csv', 'employees.csv')
-    # IndexError: list index out of range
-    # handle exception if employee does not exist
+        employees_csv_data = self.open_and_read_file(self.list_of_employees)
+        with open(EMPLOYEES_EDIT_FILE, 'w') as updated_csv:
+            writer = csv.writer(updated_csv)
+            if str(new_employee.employee_id) not in str(employees_csv_data.values):
+                print(EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG)
+            else:
+                for row in employees_csv_data.values:
+                    if new_employee.employee_id != str(row[0]):
+                        writer.writerow(row)
+        os.remove(self.list_of_employees)
+        os.rename(EMPLOYEES_EDIT_FILE, self.list_of_employees)
 
     def delete_employees_from_file(self):
         """
-        This function gets from the user a file path that contains the data of the employees and removes the employees from the employees file
-        only if all the data of all employees is supplied.
-        employees_to_delete = a string.
+        This function gets from the user a file path that contains the data of the employees and removes the
+        employees from the employees file only if all the data of all employees is supplied. employees_to_delete = a
+        string.
         """
-        employees_to_delete_file_path = raw_input("Please add the file path of the employees you wish to add: ")
         try:
-            data_to_erase = open_and_read_file(employees_to_delete_file_path)
-            with open(employees_to_delete_file_path, "r") as f:
-                data_to_erase = f.readlines()  # read data line by line
-            with open("employees.csv", "r") as f:
-                data_to_keep = f.readlines()  # read data line by line
+            employees_to_delete_file_path = raw_input(REMOVE_EMPLOYEES_FROM_FILE_MSG)
+            data_to_erase = self.open_and_read_file(employees_to_delete_file_path).values.tolist()
+            data_to_keep = self.open_and_read_file(self.list_of_employees).values.tolist()
+            with open(EMPLOYEES_EDIT_FILE, 'w') as updated_csv:
+                writer = csv.writer(updated_csv)
+                for row_data_to_erase in data_to_erase:
+                    for row in data_to_keep:
+                        if row[0] != row_data_to_erase[0] :
+                            writer.writerow(row)
 
-                # open file in write mode
-            with open("employees.csv", "w") as f:
-                for line in data_to_keep:
-                    if line not in data_to_erase:
-                        f.write(line)
+            os.remove(self.list_of_employees)
+            os.rename(EMPLOYEES_EDIT_FILE, self.list_of_employees)
         except FileNotFoundError:
-            return "File does not exist."
-    # check if all data is supplied
+            print(FILE_DOES_NOT_EXIST_MSG)
 
     def mark_attendance(self, new_employee):
         """
@@ -151,9 +146,9 @@ class EmployeesList(object):
                     if str(new_employee.employee_id) == str(row[0]):
                         name_to_save = row[1]
                         attendance_data.append(str(name_to_save))
-            if name_to_save == None:
+            if name_to_save is None:
                 print(EMPLOYEE_DOESNT_EXIST_MSG)
-            log_file = r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv'
+            log_file = ATTENDANCE_LOG_FILE_PATH
         with open(log_file, 'a') as csvFile:
             log_file = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
             log_file.writerow(attendance_data)
@@ -165,7 +160,7 @@ def attendance_report_of_employee():
     """
     employee_id = input("please insert the employee's id:")
     employee_exists_in_attendance_log = False
-    with open(r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv', 'r') as csvfile:
+    with open(ATTENDANCE_LOG_FILE_PATH, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
             if row:
@@ -180,7 +175,7 @@ def monthly_attendance_report():
     The function prints the attendance data of all employees from the last month.
     """
     this_month = datetime.datetime.now().month
-    with open(r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv', 'r') as csvfile:
+    with open(ATTENDANCE_LOG_FILE_PATH, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
             if row and '-' in row[1]:
@@ -192,7 +187,7 @@ def late_employees_report():
     """
     The function prints the attendance data of all employees who were late (came after 09:30).
     """
-    with open(r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv', 'r') as csvfile:
+    with open(ATTENDANCE_LOG_FILE_PATH, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
             if row:

@@ -15,12 +15,15 @@ EMPLOYEE_AGE_INPUT_MSG = "Please add the employee's age: "
 EMPLOYEE_PHONE_INPUT_MSG = "Please add the employee's phone: "
 
 def open_and_read_file(csv_file):
+    """
+    This function gets the employees csv path as a string, opens and reads it.
+    """
     return pd.read_csv(csv_file)
 
 def csv_data_is_supplied_test():
     """
     This function gets from the user the employees csv path as a string and checks if all data is supplied.
-    employee_id = a string.
+    csv_path_from_user = a string.
     """
     try:
         csv_path_from_user = raw_input(CSV_PATH_INPUT_MSG)
