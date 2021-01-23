@@ -2,7 +2,6 @@ import csv
 import datetime
 import exceptions_tests
 import os
-import pandas
 import pandas as pd
 from pip._vendor.distlib.compat import raw_input
 
@@ -13,9 +12,10 @@ LATE_HOUR = "09:30:00"
 ADD_EMPLOYEES_FROM_FILE_MSG = "Please add the full file path of the employees you wish to add: "
 EMPLOYEE_ATTENDANCE_DOESNT_EXIST_MSG = "Sorry, the employee has no data in the attendance report."
 EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG = "Sorry, that employee does not exist in this file."
-EMPLOYEES_EDIT_FILE = r'C:\Users\rotem\PycharmProjects\final_project_python\employees_edit.csv'
+EMPLOYEES_EDIT_PATH = r'C:\Users\rotem\PycharmProjects\final_project_python\employees_edit.csv'
 REMOVE_EMPLOYEES_FROM_FILE_MSG = "Please add the file path of the employees you wish to remove: "
-ATTENDANCE_LOG_FILE_PATH = r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv'
+ATTENDANCE_LOG_PATH = r'C:\Users\rotem\PycharmProjects\final_project_python\attendance_log.csv'
+
 
 class Employee(object):
 
@@ -27,10 +27,10 @@ class Employee(object):
         phone = a string.
         age = a string.
         """
-        self.employee_id = employee_id
-        self.full_name = full_name
-        self.phone = phone
-        self.age = age
+        self.employee_id = exceptions_tests.employee_id_test(employee_id)
+        self.full_name = exceptions_tests.full_name_test(full_name)
+        self.phone = exceptions_tests.phone_test(phone)
+        self.age = exceptions_tests.age_test(age)
 
 
 class EmployeesList(object):
@@ -42,7 +42,7 @@ class EmployeesList(object):
         """
         self.list_of_employees = list_of_employees
 
-    def open_and_read_file(self, list_of_employees):
+    def read_file(self, list_of_employees):
         """
         This function gets employees file's path from user and returns its content.
         list_of_employees = a string.
@@ -50,7 +50,7 @@ class EmployeesList(object):
         employees_csv_data = pd.read_csv(list_of_employees)
         return employees_csv_data
 
-    def open_and_write_employee_file(self, new_employee):
+    def write_employee_file(self, new_employee):
         """
         This function appends the new employee's data to the main employees file.
         new_employee = a string.
@@ -64,12 +64,12 @@ class EmployeesList(object):
         This function gets the credentials of a new employee and employees file path from from user and adds it to
         the file. new_employee = new employee's credentials.
         """
-        employees_csv_data = self.open_and_read_file()
+        employees_csv_data = self.read_file(self.list_of_employees)
         for row in employees_csv_data.values:
             if new_employee.employee_id == str(row[0]):
                 print(EMPLOYEE_ALREADY_EXISTS_MSG)
                 return
-        self.open_and_write_employee_file(new_employee)
+        self.write_employee_file(new_employee)
 
     def add_employees_from_file(self):
         """
@@ -78,9 +78,10 @@ class EmployeesList(object):
         """
         try:
             new_employees_file_path = raw_input(ADD_EMPLOYEES_FROM_FILE_MSG)
-            new_employees_file_data = self.open_and_read_file(new_employees_file_path)
-            employees_csv_data = self.open_and_read_file(self.list_of_employees)
-            updated_csv = pandas.concat([employees_csv_data, new_employees_file_data]).drop_duplicates().reset_index(drop=True)
+            exceptions_tests.csv_data_is_supplied_test(new_employees_file_path)
+            new_employees_file_data = self.read_file(new_employees_file_path)
+            employees_csv_data = self.read_file(self.list_of_employees)
+            updated_csv = pd.concat([employees_csv_data, new_employees_file_data]).drop_duplicates().reset_index(drop=True)
             updated_csv.to_csv(self.list_of_employees, index=False)
         except FileNotFoundError:
             print(FILE_DOES_NOT_EXIST_MSG)
@@ -91,8 +92,8 @@ class EmployeesList(object):
         employees to a temporary file and then deletes the old employees file. Afterwards, it saves it as the main
         employees file (employees). employees_name = a string.
         """
-        employees_csv_data = self.open_and_read_file(self.list_of_employees)
-        with open(EMPLOYEES_EDIT_FILE, 'w') as updated_csv:
+        employees_csv_data = self.read_file(self.list_of_employees)
+        with open(EMPLOYEES_EDIT_PATH, 'w') as updated_csv:
             writer = csv.writer(updated_csv)
             if str(new_employee.employee_id) not in str(employees_csv_data.values):
                 print(EMPLOYEE_DOESNT_EXIST_IN_FILE_MSG)
@@ -101,7 +102,7 @@ class EmployeesList(object):
                     if new_employee.employee_id != str(row[0]):
                         writer.writerow(row)
         os.remove(self.list_of_employees)
-        os.rename(EMPLOYEES_EDIT_FILE, self.list_of_employees)
+        os.rename(EMPLOYEES_EDIT_PATH, self.list_of_employees)
 
     def delete_employees_from_file(self):
         """
@@ -111,17 +112,18 @@ class EmployeesList(object):
         """
         try:
             employees_to_delete_file_path = raw_input(REMOVE_EMPLOYEES_FROM_FILE_MSG)
-            data_to_erase = self.open_and_read_file(employees_to_delete_file_path).values.tolist()
-            data_to_keep = self.open_and_read_file(self.list_of_employees).values.tolist()
-            with open(EMPLOYEES_EDIT_FILE, 'w') as updated_csv:
+            exceptions_tests.csv_data_is_supplied_test(employees_to_delete_file_path)
+            data_to_erase = self.read_file(employees_to_delete_file_path).values.tolist()
+            data_to_keep = self.read_file(self.list_of_employees).values.tolist()
+            with open(EMPLOYEES_EDIT_PATH, 'w') as updated_csv:
                 writer = csv.writer(updated_csv)
                 for row_data_to_erase in data_to_erase:
                     for row in data_to_keep:
-                        if row[0] != row_data_to_erase[0] :
+                        if row[0] != row_data_to_erase[0]:
                             writer.writerow(row)
 
             os.remove(self.list_of_employees)
-            os.rename(EMPLOYEES_EDIT_FILE, self.list_of_employees)
+            os.rename(EMPLOYEES_EDIT_PATH, self.list_of_employees)
         except FileNotFoundError:
             print(FILE_DOES_NOT_EXIST_MSG)
 
@@ -144,11 +146,10 @@ class EmployeesList(object):
             for row in reader:
                 if row:
                     if str(new_employee.employee_id) == str(row[0]):
-                        name_to_save = row[1]
-                        attendance_data.append(str(name_to_save))
+                        attendance_data.append(str(row[1]))
             if name_to_save is None:
                 print(EMPLOYEE_DOESNT_EXIST_MSG)
-            log_file = ATTENDANCE_LOG_FILE_PATH
+            log_file = ATTENDANCE_LOG_PATH
         with open(log_file, 'a') as csvFile:
             log_file = csv.writer(csvFile, delimiter=',', quoting=csv.QUOTE_ALL)
             log_file.writerow(attendance_data)
@@ -160,7 +161,7 @@ def attendance_report_of_employee():
     """
     employee_id = input("please insert the employee's id:")
     employee_exists_in_attendance_log = False
-    with open(ATTENDANCE_LOG_FILE_PATH, 'r') as csvfile:
+    with open(ATTENDANCE_LOG_PATH, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
             if row:
@@ -175,7 +176,7 @@ def monthly_attendance_report():
     The function prints the attendance data of all employees from the last month.
     """
     this_month = datetime.datetime.now().month
-    with open(ATTENDANCE_LOG_FILE_PATH, 'r') as csvfile:
+    with open(ATTENDANCE_LOG_PATH, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
             if row and '-' in row[1]:
@@ -187,7 +188,7 @@ def late_employees_report():
     """
     The function prints the attendance data of all employees who were late (came after 09:30).
     """
-    with open(ATTENDANCE_LOG_FILE_PATH, 'r') as csvfile:
+    with open(ATTENDANCE_LOG_PATH, 'r') as csvfile:
         content = csv.reader(csvfile, delimiter=',')
         for row in content:
             if row:
